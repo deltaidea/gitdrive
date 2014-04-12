@@ -63,10 +63,19 @@ def main():
             for chunk in r.iter_content():
                 fd.write(chunk)
 
+        # Prepare environment variables to change commit time
+        env = os.environ.copy()
+        env['GIT_COMMITTER_DATE'] = rev['modifiedDate']
+        env['GIT_AUTHOR_DATE'] = rev['modifiedDate']
+        env['GIT_COMMITTER_NAME'] = rev['lastModifyingUserName']
+        env['GIT_AUTHOR_NAME'] = rev['lastModifyingUserName']
+        env['GIT_COMMITTER_EMAIL'] = rev['lastModifyingUserName']
+        env['GIT_AUTHOR_EMAIL'] = rev['lastModifyingUserName']
+
         # Commit changes to repository.
         subprocess.call(['git', 'add', 'content'])
         subprocess.call(['git', 'commit', '-m',
-            'revision from %s' % rev['modifiedDate']])
+            'revision from %s' % rev['modifiedDate']], env=env)
 
 if __name__ == '__main__':
     main()
