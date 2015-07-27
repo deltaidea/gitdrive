@@ -99,11 +99,11 @@ class GoogleDrive(object):
 
         url = '%s?%s' % ('%s/auth' % OAUTH_URI, urllib.urlencode(params))
 
-        print 'Point your browser at the following URL and then '
-        print 'enter the authorization code at the prompt:'
-        print
-        print url
-        print
+        print('Point your browser at the following URL and then ')
+        print('enter the authorization code at the prompt:')
+        print()
+        print(url)
+        print()
         code = raw_input('Enter code: ')
         self.code = code
         r = requests.post('%s/token' % OAUTH_URI, {
@@ -113,7 +113,7 @@ class GoogleDrive(object):
             'redirect_uri': REDIRECT_URI,
             'grant_type': 'authorization_code',
             })
-        
+
         if not r:
             raise ValueError('failed to authenticate')
 
