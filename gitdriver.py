@@ -23,7 +23,7 @@ def parse_args():
     return p.parse_args()
 
 def commit_revision(gd, opts, rev):
-    with open('content', 'w') as fd:
+    with open('content', 'wb') as fd:
         if 'exportLinks' in rev and not opts.raw:
             # If the file provides an 'exportLinks' dictionary,
             # download the requested MIME type.
@@ -50,7 +50,7 @@ def commit_revision(gd, opts, rev):
     # Commit changes to repository.
     subprocess.call(['git', 'add', 'content'])
     subprocess.call(['git', 'commit', '-m',
-        'revision from %s' % rev['modifiedDate']], env=env)
+        'revision from {0}'.format(rev['modifiedDate'].encode('utf-8'))], env=env)
 
 
 def main():
@@ -75,8 +75,8 @@ def main():
     if os.path.isdir(md['title']):
         # Find revision matching last commit and process only following revisions
         os.chdir(md['title'])
-        print('Update repository "%(title)s"' % md)
-        last_commit_message = subprocess.check_output('git log -n 1 --format=%B', shell=True)
+        print('Update repository "{0}"'.format(md['title'].encode('utf-8')))
+        last_commit_message = subprocess.check_output('git log -n 1 --format=%B', shell=True).decode(sys.stdout.encoding)
         print('Last commit: ' + last_commit_message + 'Iterating Google Drive revisions:')
         revision_matched = False
         for rev in gd.revisions(opts.docid):
@@ -89,7 +89,7 @@ def main():
         print('Repository is up to date.')
     else:
         # Initialize the git repository.
-        print('Create repository "%(title)s"' % md)
+        print('Create repository "{0}"'.format(md['title'].encode('utf-8')))
         subprocess.call(['git','init',md['title']])
         os.chdir(md['title'])
 

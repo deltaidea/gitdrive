@@ -97,14 +97,14 @@ class GoogleDrive(object):
             'response_type': 'code',
             }
 
-        url = '%s?%s' % ('%s/auth' % OAUTH_URI, urllib.urlencode(params))
+        url = '%s?%s' % ('%s/auth' % OAUTH_URI, urllib.parse.urlencode(params))
 
         print('Point your browser at the following URL and then ')
         print('enter the authorization code at the prompt:')
         print()
         print(url)
         print()
-        code = raw_input('Enter code: ')
+        code = input('Enter code: ')
         self.code = code
         r = requests.post('%s/token' % OAUTH_URI, {
             'code': code,
@@ -122,7 +122,7 @@ class GoogleDrive(object):
 
     def store_credentials(self):
         '''Write credentials to file.'''
-        with open(self.credentials, 'w') as fd:
+        with open(self.credentials, 'wb') as fd:
             fd.write(yaml.safe_dump(self.token, encoding='utf-8',
                 default_flow_style=False))
 
