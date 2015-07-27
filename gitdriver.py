@@ -64,7 +64,8 @@ def commit_revision(gd, opts, rev):
     env['GIT_AUTHOR_EMAIL'] = rev['lastModifyingUserName']
 
     subprocess.call(['git', 'commit', '-m',
-        'revision from {0}'.format(rev['modifiedDate'])], env=env)
+        'revision from {0} by {1}'.format(rev['modifiedDate'],
+            rev['lastModifyingUserName'])], env=env)
 
 def main():
     opts = parse_args()
