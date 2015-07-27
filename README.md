@@ -29,6 +29,10 @@
     8d3e3ec revision from 2013-01-08T21:57:45.800Z
     ccc0bdd revision from 2013-01-08T21:57:38.837Z
 
+## Install dependencies
+
+Just run `pip install -r requrements.txt`.
+
 ## Google setup
 
 You will need to create an OAuth client id and secret for use with
