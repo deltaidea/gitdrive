@@ -3,6 +3,7 @@
 import os
 import sys
 import argparse
+import mimetypes
 import subprocess
 import yaml
 
@@ -11,23 +12,33 @@ from drive import GoogleDrive, DRIVE_RW_SCOPE
 def parse_args():
     p = argparse.ArgumentParser()
     p.add_argument('--config', '-f', default='gd.conf')
-    p.add_argument('--text', '-T', action='store_const', const='text/plain',
-            dest='mime_type')
-    p.add_argument('--html', '-H', action='store_const', const='text/html',
-            dest='mime_type')
-    p.add_argument('--mime-type', dest='mime_type')
-    p.add_argument('--raw', '-R', action='store_true',
-            help='Download original document if possible.')
+    p.add_argument('--text', '-T', action='append_const', const='text/plain',
+            dest='mime_types')
+    p.add_argument('--html', '-H', action='append_const', const='text/html',
+            dest='mime_types')
+    p.add_argument('--mime-type', action='append', dest='mime_types')
+    p.add_argument('--raw', '-R', action='append_const', const='raw',
+            dest='mime_types', help='Download original document if possible.')
     p.add_argument('docid')
 
     return p.parse_args()
 
-def commit_revision(gd, opts, rev):
-    with open('content', 'wb') as fd:
-        if 'exportLinks' in rev and not opts.raw:
+def download_content_with_mime(gd, mime, rev):
+    # mimetypes module randomly decides if `text/plain` is `.c`, `.pl`, or
+    # some other source code extension. Let's pin it to `.txt`.
+    if mime == 'text/plain':
+        file_extension = '.txt'
+    # Same for `text/html` - mimetypes can't decide if it's `.htm` or `.html`.
+    elif mime == 'text/html':
+        file_extension = '.html'
+    else:
+        file_extension = mimetypes.guess_extension(mime) or ''
+
+    with open('content' + file_extension, 'wb') as fd:
+        if 'exportLinks' in rev and (mime != "raw"):
             # If the file provides an 'exportLinks' dictionary,
             # download the requested MIME type.
-            r = gd.session.get(rev['exportLinks'][opts.mime_type])
+            r = gd.session.get(rev['exportLinks'][mime])
         elif 'downloadUrl' in rev:
             # Otherwise, if there is a downloadUrl, use that.
             r = gd.session.get(rev['downloadUrl'])
@@ -38,7 +49,12 @@ def commit_revision(gd, opts, rev):
         for chunk in r.iter_content():
             fd.write(chunk)
 
-    # Prepare environment variables to change commit time
+    subprocess.call(['git', 'add', 'content' + file_extension])
+
+def commit_revision(gd, opts, rev):
+    for mime in opts.mime_types:
+        download_content_with_mime(gd, mime, rev);
+
     env = os.environ.copy()
     env['GIT_COMMITTER_DATE'] = rev['modifiedDate']
     env['GIT_AUTHOR_DATE'] = rev['modifiedDate']
@@ -47,16 +63,14 @@ def commit_revision(gd, opts, rev):
     env['GIT_COMMITTER_EMAIL'] = rev['lastModifyingUserName']
     env['GIT_AUTHOR_EMAIL'] = rev['lastModifyingUserName']
 
-    # Commit changes to repository.
-    subprocess.call(['git', 'add', 'content'])
     subprocess.call(['git', 'commit', '-m',
         'revision from {0}'.format(rev['modifiedDate'].encode('utf-8'))], env=env)
 
 
 def main():
     opts = parse_args()
-    if not opts.mime_type:
-        print('Exactly one mime-type must be given!')
+    if not opts.mime_types:
+        print('At least one mime-type must be given!')
         exit(1)
     cfg = yaml.load(open(opts.config))
     gd = GoogleDrive(
