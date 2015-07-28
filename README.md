@@ -1,6 +1,6 @@
 ## Synopsis
 
-    gitdriver.py [-h] [--config CONFIG] [--text] [--html] docid
+    gitdrive.py [-h] [--config CONFIG] [--text] [--html] docid
 
 ## Options
 
@@ -11,9 +11,9 @@
 
 ## Example usage:
 
-    $ python gitdriver.py 1j6Ygv0_this_is_a_fake_document_id_a8Q66mvt4
+    $ python gitdrive.py 1j6Ygv0_this_is_a_fake_document_id_a8Q66mvt4
     Create repository "Untitled"
-    Initialized empty Git repository in /home/lars/projects/gitdriver/Untitled/.git/
+    Initialized empty Git repository in /home/lars/projects/gitdrive/Untitled/.git/
     [master (root-commit) 27baec9] revision from 2013-01-08T21:57:38.837Z
      1 file changed, 1 insertion(+)
      create mode 100644 content
@@ -60,5 +60,5 @@ step.
 
 ## License - [MIT](LICENSE)
 
-Based on [larsks/gitdriver](https://github.com/larsks/gitdriver). That project
+Based on [larsks/gitdrive](https://github.com/larsks/gitdrive). That project
 seems to be no longer maintained.
