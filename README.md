@@ -58,3 +58,7 @@ Where `YOUR_CLIENT_ID` and `YOUR_CLIENT_SECRET` are replaced with the
 appropriate values from Google that you established in the previous
 step.
 
+## License - [MIT](LICENSE)
+
+Based on [larsks/gitdriver](https://github.com/larsks/gitdriver). That project
+seems to be no longer maintained.
