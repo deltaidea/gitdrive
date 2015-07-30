@@ -60,5 +60,5 @@ step.
 
 ## License - [MIT](LICENSE)
 
-Based on [larsks/gitdrive](https://github.com/larsks/gitdrive). That project
+Based on [larsks/gitdriver](https://github.com/larsks/gitdriver). That project
 seems to be no longer maintained.
