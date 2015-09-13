@@ -70,7 +70,7 @@ def commit_revision(gd, opts, rev):
 def main():
     opts = parse_args()
     if not opts.mime_types:
-        print('At least one mime-type must be given!')
+        print('At least one mime-type must be given: ensure that you are running with -T, -H, etc.')
         exit(1)
     cfg = yaml.load(open(opts.config))
     gd = GoogleDrive(
